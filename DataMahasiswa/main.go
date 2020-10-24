@@ -311,6 +311,30 @@ func createMahasiswa(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+func createAlamatMhs(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == "POST" {
+
+		KodeAlamat := r.FormValue("KodeAlamat")
+		Jalan := r.FormValue("Jalan")
+		Kelurahan := r.FormValue("Kelurahan")
+		Kecamatan := r.FormValue("Kecamatan")
+		KotaKabupaten := r.FormValue("KotaKabupaten")
+		Provinsi := r.FormValue("Provinsi")
+		MahasiswaID := r.FormValue("MahasiswaID")
+
+		stmt, err := db.Prepare("INSERT INTO alamat_details (KodeAlamat,Jalan,Kelurahan,Kecamatan,KotaKabupaten,Provinsi,MahasiswaID) VALUES (?,?,?,?,?,?,?)")
+
+		_, err = stmt.Exec(KodeAlamat, Jalan, Kelurahan, Kecamatan, KotaKabupaten, Provinsi, MahasiswaID)
+		if err != nil {
+			fmt.Fprintf(w, "Data Duplicate")
+		} else {
+			fmt.Fprintf(w, "Data Created")
+		}
+
+	}
+
+}
 func deleteMahasiswa(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	stmt, err := db.Prepare("DELETE FROM mahasiswa WHERE MahasiswaID = ?")
@@ -322,6 +346,46 @@ func deleteMahasiswa(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Mahasiswa with ID = %s was Deleted", params["id"])
+}
+
+func createMatkul(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == "POST" {
+
+		KodeMatkul := r.FormValue("KodeMatkul")
+		NamaMatkul := r.FormValue("NamaMatkul")
+
+		stmt, err := db.Prepare("INSERT INTO mata_kuliah (KodeMatkul,NamaMatkul) Values (?,?)")
+
+		_, err = stmt.Exec(KodeMatkul, NamaMatkul)
+
+		if err != nil {
+			fmt.Fprintf(w, "Data Duplicate")
+		} else {
+			fmt.Fprintf(w, "Data Created")
+		}
+
+	}
+}
+func createNilai(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+
+		MahasiswaID := r.FormValue("MahasiswaID")
+		KodeMatkul := r.FormValue("KodeMatkul")
+		Nilai := r.FormValue("Nilai")
+		Semester := r.FormValue("Semester")
+
+		stmt, err := db.Prepare("INSERT INTO tabel_nilai (MahasiswaID,KodeMAtkul,Nilai,Semester) VALUES (?,?,?,?)")
+
+		_, err = stmt.Exec(MahasiswaID, KodeMatkul, Nilai, Semester)
+
+		if err != nil {
+			fmt.Fprintf(w, "Data Duplicate")
+		} else {
+			fmt.Fprintf(w, "Data Created")
+		}
+
+	}
 }
 
 func main() {
@@ -342,6 +406,9 @@ func main() {
 	r.HandleFunc("/mahasiswadata/{id}", getAllData).Methods("GET")
 	r.HandleFunc("/mahasiswa", createMahasiswa).Methods("POST")
 	r.HandleFunc("/mahasiswa/{id}", deleteMahasiswa).Methods("DELETE")
+	r.HandleFunc("/matakuliah", createMatkul).Methods("POST")
+	r.HandleFunc("/nilai", createNilai).Methods("POST")
+	r.HandleFunc("/alamat", createAlamatMhs).Methods("POST")
 
 	// Start server
 	log.Fatal(http.ListenAndServe(":8080", r))
