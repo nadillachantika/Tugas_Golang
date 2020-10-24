@@ -375,7 +375,7 @@ func createNilai(w http.ResponseWriter, r *http.Request) {
 		Nilai := r.FormValue("Nilai")
 		Semester := r.FormValue("Semester")
 
-		stmt, err := db.Prepare("INSERT INTO tabel_nilai (MahasiswaID,KodeMAtkul,Nilai,Semester) VALUES (?,?,?,?)")
+		stmt, err := db.Prepare("INSERT INTO tabel_nilai (MahasiswaID,KodeMatkul,Nilai,Semester) VALUES (?,?,?,?)")
 
 		_, err = stmt.Exec(MahasiswaID, KodeMatkul, Nilai, Semester)
 
