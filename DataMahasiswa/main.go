@@ -196,6 +196,7 @@ func getAllData(w http.ResponseWriter, r *http.Request) {
 	var almdet AlamatDetail
 	var mhs Mahasiswa
 	var nilaidet NilaiDetail
+	params := mux.Vars(r)
 
 	sql := `SELECT 
 				 MahasiswaID,
@@ -204,9 +205,9 @@ func getAllData(w http.ResponseWriter, r *http.Request) {
 				 IFNULL(Jurusan,'') Jurusan,
 				 IFNULL(Prodi,'') Prodi
 		
-				 FROM mahasiswa WHERE MahasiswaID IN (4)`
+				 FROM mahasiswa WHERE MahasiswaID = ?`
 
-	result, err := db.Query(sql)
+	result, err := db.Query(sql,params["id"])
 
 	defer result.Close()
 
@@ -305,7 +306,7 @@ func main() {
 	// Route handles & endpoints
 	r.HandleFunc("/mahasiswa", getMahasiswa).Methods("GET")
 	r.HandleFunc("/nilaimhs", getNilaiMahasiswa).Methods("GET")
-	r.HandleFunc("/mahasiswadata", getAllData).Methods("GET")
+	r.HandleFunc("/mahasiswadata/{id}", getAllData).Methods("GET")
 
 	// Start server
 	log.Fatal(http.ListenAndServe(":8080", r))
