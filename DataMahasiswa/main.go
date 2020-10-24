@@ -311,6 +311,18 @@ func createMahasiswa(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+func deleteMahasiswa(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	stmt, err := db.Prepare("DELETE FROM mahasiswa WHERE MahasiswaID = ?")
+
+	_, err = stmt.Exec(params["id"])
+
+	if err != nil {
+		fmt.Fprint(w, "Delete Failed")
+	}
+
+	fmt.Fprintf(w, "Mahasiswa with ID = %s was Deleted", params["id"])
+}
 
 func main() {
 
@@ -329,6 +341,7 @@ func main() {
 	r.HandleFunc("/nilaimhs", getNilaiMahasiswa).Methods("GET")
 	r.HandleFunc("/mahasiswadata/{id}", getAllData).Methods("GET")
 	r.HandleFunc("/mahasiswa", createMahasiswa).Methods("POST")
+	r.HandleFunc("/mahasiswa/{id}", deleteMahasiswa).Methods("DELETE")
 
 	// Start server
 	log.Fatal(http.ListenAndServe(":8080", r))
