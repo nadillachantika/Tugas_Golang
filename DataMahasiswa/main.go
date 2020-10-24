@@ -207,7 +207,7 @@ func getAllData(w http.ResponseWriter, r *http.Request) {
 		
 				 FROM mahasiswa WHERE MahasiswaID = ?`
 
-	result, err := db.Query(sql,params["id"])
+	result, err := db.Query(sql, params["id"])
 
 	defer result.Close()
 
@@ -291,6 +291,27 @@ func getAllData(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func createMahasiswa(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == "POST" {
+		Nama := r.FormValue("Nama")
+		NoBp := r.FormValue("NoBp")
+		Jurusan := r.FormValue("Jurusan")
+		Prodi := r.FormValue("Prodi")
+
+		stmt, err := db.Prepare("INSERT INTO mahasiswa (Nama,NoBp,Jurusan,Prodi) VALUES (?,?,?,?)")
+
+		_, err = stmt.Exec(Nama, NoBp, Jurusan, Prodi)
+		if err != nil {
+			fmt.Fprint(w, "Data Duplicat")
+		} else {
+			fmt.Fprint(w, "Data Created")
+		}
+
+	}
+
+}
+
 func main() {
 
 	db, err = sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/perkuliahan")
@@ -307,6 +328,7 @@ func main() {
 	r.HandleFunc("/mahasiswa", getMahasiswa).Methods("GET")
 	r.HandleFunc("/nilaimhs", getNilaiMahasiswa).Methods("GET")
 	r.HandleFunc("/mahasiswadata/{id}", getAllData).Methods("GET")
+	r.HandleFunc("/mahasiswa", createMahasiswa).Methods("POST")
 
 	// Start server
 	log.Fatal(http.ListenAndServe(":8080", r))
