@@ -37,9 +37,9 @@ type AlamatDetail struct {
 
 // NilaiMahasiswa struct
 type NilaiDetail struct {
-	NamaMatkul string `json:"NamaMatkul"`
-	Nilai      string `json:"Nilai"`
-	Semester   string `json:"Semester"`
+	NamaMatkul string  `json:"NamaMatkul"`
+	Nilai      float64 `json:"Nilai"`
+	Semester   string  `json:"Semester"`
 }
 
 //Get all mahasiswa
